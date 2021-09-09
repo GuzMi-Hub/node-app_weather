@@ -1,11 +1,14 @@
+const fs= require('fs');
+
 const axios = require("axios");
 require('colors');
 
 class Busquedas {
   historial = [];
+  dbPath = './db/database.json';
 
   constructor() {
-    //TODO: leer DB si existe
+    this.leerDB()
   }
 
   get paramsMapbox(){
@@ -23,6 +26,11 @@ class Busquedas {
         }
   }
 
+  get historialCapitalizado(){
+    const lugaresCapitalizados = this.historial.map((lugar)=>{ return lugar.replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())));});
+    return lugaresCapitalizados;
+
+  }
 
 
   async buscarLugar(lugar = "") {
@@ -81,6 +89,40 @@ class Busquedas {
       console.error(`error peticion a OpenWeather: ${error}`.red );
       console.error("=====================================================================".red);
     }
+
+  }
+
+  agregarHistorial(lugar = ''){
+
+    if(this.historial.includes(lugar.toLocaleLowerCase())){
+      return
+    };
+
+    this.historial.unshift(lugar.toLocaleLowerCase());
+
+    this.grabarDB()
+
+  }
+
+  grabarDB(){
+    const payload = {
+      historial: this.historial
+    };
+
+    fs.writeFileSync(this.dbPath, JSON.stringify(payload));
+
+  }
+
+  leerDB(){
+    if(fs.existsSync(this.dbPath)){
+      const dataJson = fs.readFileSync(this.dbPath, {encoding: 'utf-8'});
+      const data = JSON.parse(dataJson);
+
+     this.historial = data.historial;
+    }else{
+      return
+    }
+    
 
   }
 

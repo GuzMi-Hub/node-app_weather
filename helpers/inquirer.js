@@ -76,7 +76,7 @@ const listarLugares = async (lugares = []) => {
 
   choices.unshift({
     value: 0,
-    name: "0.".green + "Cancelar",
+    name: "0. ".green + "Cancelar",
   });
 
   const preguntas = [
