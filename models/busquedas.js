@@ -25,7 +25,15 @@ class Busquedas {
 
       const resp = await intance.get();
 
-      console.log(resp.data);
+      return resp.data.features.map((lugar)=>{
+        return {
+              id: lugar.id, 
+              name: lugar.place_name, 
+              longitud: lugar.center[0],
+              latitud: lugar.center[1]
+            }
+
+      })
     } catch (error) {
       console.error(error);
     }
