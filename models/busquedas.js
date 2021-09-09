@@ -1,4 +1,5 @@
 const axios = require("axios");
+require('colors');
 
 class Busquedas {
   historial = [];
@@ -14,8 +15,17 @@ class Busquedas {
           'language': 'es',
         }
   }
+  get paramsOpenWeather(){
+    return{
+          'appid':process.env.OPENWEATHER_KEY || '',
+          'units': 'metric',
+          'lang': 'es', 
+        }
+  }
 
-  async ciudad(lugar = "") {
+
+
+  async buscarLugar(lugar = "") {
     try {
       //petición http
       const intance = axios.create({
@@ -40,6 +50,40 @@ class Busquedas {
 
     return [];
   }
+
+  async climaLugar (latitud, longitud){
+
+    try {
+      
+      const intance = axios.create({
+          baseURL: 'https://api.openweathermap.org/data/2.5/weather?',
+          params: {...this.paramsOpenWeather, 
+                  'lat': latitud,
+                  'lon': longitud,}
+      });
+
+      const resp = await intance.get();
+
+      const {weather, main} = resp.data;
+
+      return{
+        temp: main.temp,
+        temp_min: main.temp_min,
+        temp_max: main.temp_max,
+        description: weather[0].description,
+        
+      }
+
+
+
+    } catch (error) {
+      console.error("\n=====================================================================".red);
+      console.error(`error peticion a OpenWeather: ${error}`.red );
+      console.error("=====================================================================".red);
+    }
+
+  }
+
 }
 
 module.exports = Busquedas;
