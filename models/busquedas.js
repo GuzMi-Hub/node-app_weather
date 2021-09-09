@@ -98,6 +98,8 @@ class Busquedas {
       return
     };
 
+    this.historial = this.historial.splice(0,4);
+
     this.historial.unshift(lugar.toLocaleLowerCase());
 
     this.grabarDB()
